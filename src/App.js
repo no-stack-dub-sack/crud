@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link, Match } from 'react-router';
+import { Route, NavLink } from 'react-router-dom';
 import GamesPage from './components/GamesPage';
-import GameForm from './components/GameForm'
+import GameFormPage from './components/GameFormPage'
+import HomePage from './components/HomePage';
 import logo from './logo.svg';
 import './App.css';
 
@@ -10,14 +11,15 @@ class App extends Component {
     return (
       <div className="ui container">
         <div className="ui three item menu">
-          <Link className="item" activeClassName="active" activeOnlyWhenExact to="/">Home</Link>
-          <Link className="item" activeClassName="active" activeOnlyWhenExact to="/games">Games</Link>
-          <Link className="item" activeClassName="active" activeOnlyWhenExact to="/games/new">Add New Game</Link>
+          <NavLink activeClassName="active item" className="item" exact to="/">Home</NavLink>
+          <NavLink activeClassName="active item" className="item" exact to="/games">Games</NavLink>
+          <NavLink activeClassName="active item" className="item" exact to="/games/new">Add New</NavLink>
         </div>
         
-        
-        <Match exactly pattern="/games" component={GamesPage} />
-        <Match pattern="/games/new" component={GameForm} />
+        <Route exact path="/" component={HomePage} />
+        <Route exact path="/games" component={GamesPage} />
+        <Route path="/games/new" component={GameFormPage} />
+        <Route path="/game/:_id" component={GameFormPage} />
         
       </div>
     );

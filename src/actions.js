@@ -1,4 +1,4 @@
-import { SET_GAMES } from './types.js'
+import { SET_GAMES, ADD_GAME, GAME_FETCHED, GAME_UPDATED, GAME_DELETED } from './types.js'
 
 function handleResponse(response) {
   if (response.ok) {
@@ -7,6 +7,13 @@ function handleResponse(response) {
     let error = new Error(response.statusText);
     error.response = response;
     throw error;
+  }
+}
+
+export function addGame(game) {
+  return {
+    type: ADD_GAME,
+    game
   }
 }
 
@@ -19,8 +26,34 @@ export function saveGame(data) {
         "Content-Type": "application/json"
       }
     }).then(handleResponse)
+      .then(data => addGame(data.game))
   }
 }
+
+/***************************************/
+
+export function gameUpdated(game) {
+  return {
+    type: GAME_UPDATED,
+    game
+  }
+}
+
+export function updateGame(data) {
+  return dispatch => {
+    return fetch(`/api/games/${data._id}`, {
+      method: 'put',
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(handleResponse)
+      .then(data => gameUpdated(data.game))
+  }
+}
+
+/***************************************/
+
 export function setGames(games) {
   return {
     type: SET_GAMES,
@@ -35,3 +68,43 @@ export function fetchGames() {
       .then(data => dispatch(setGames(data.games)));
   }
 }
+
+/***************************************/
+
+export function gameFetched(game) {
+  return {
+    type: GAME_FETCHED,
+    game
+  }
+}
+
+export function fetchGame(id) {
+  return dispatch => {
+    fetch(`/api/games/${id}`)
+      .then(res => res.json())
+      .then(data => dispatch(gameFetched(data.game)));
+  }
+}
+
+/***************************************/
+
+export function gameDeleted(gameId) {
+  return {
+    type: GAME_DELETED,
+    gameId
+  }
+}
+
+export function deleteGame(id) {
+  return dispatch => {
+    return fetch(`/api/games/${id}`, {
+      method: 'delete',
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(handleResponse)
+      .then(data => dispatch(gameDeleted(id)));
+  }
+}
+
+
